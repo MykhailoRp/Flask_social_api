@@ -11,7 +11,7 @@ from app.exceptions import post_exceptions as post_exc
 from flask import json
 from werkzeug.exceptions import HTTPException
 
-api_path = "/api"
+api_path = "/api_v1"
 
 @app.errorhandler(HTTPException)
 def handle_exception(e):

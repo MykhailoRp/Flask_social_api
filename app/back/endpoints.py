@@ -11,6 +11,8 @@ from app.exceptions import post_exceptions as post_exc
 from flask import json
 from werkzeug.exceptions import HTTPException
 
+api_path = "/api"
+
 @app.errorhandler(HTTPException)
 def handle_exception(e):
     response = e.get_response()
@@ -23,7 +25,7 @@ def handle_exception(e):
     return response
 
 
-@app.route('/signup', methods = ['POST'])
+@app.route(api_path + '/signup', methods = ['POST'])
 @util.required_variables({
     "login":str,
     "password":str,
@@ -55,7 +57,7 @@ def user_signup(login, password, username):
 
     return redirect(url_for("main.user_login", login = login, password = password))
 
-@app.route('/login', methods = ['POST', 'GET'])
+@app.route(api_path + '/login', methods = ['POST', 'GET'])
 @util.required_variables({
     "login":str,
     "password":str
@@ -76,7 +78,7 @@ def user_login(login, password):
             code=404
         ), 404
 
-@app.route('/logout', methods = ['POST'])
+@app.route(api_path + '/logout', methods = ['POST'])
 @auth.requires_token
 @auth.log_request
 @util.required_variables({
@@ -99,7 +101,7 @@ def user_logout(user, token, auth_token, *args, **kwargs):
             status=True
         ), 200
 
-@app.route('/create_post', methods = ['POST'])
+@app.route(api_path + '/create_post', methods = ['POST'])
 @auth.requires_token
 @auth.log_request
 @util.required_variables({
@@ -116,7 +118,7 @@ def create_post(user: models.User, content, *args, **kwargs):
 
     return redirect(f"/post/{new_post.id}")
 
-@app.route('/post/<int:post_id>/delete', methods = ['DELETE'])
+@app.route(api_path + '/post/<int:post_id>/delete', methods = ['DELETE'])
 @auth.requires_token
 @auth.log_request
 def delete_post(post_id, user: models.User, *args, **kwargs):
@@ -134,7 +136,7 @@ def delete_post(post_id, user: models.User, *args, **kwargs):
             code=404
     ), 404
 
-@app.route('/post/<int:post_id>', methods = ['GET'])
+@app.route(api_path + '/post/<int:post_id>', methods = ['GET'])
 @auth.optional_token
 @auth.log_request
 def post_info(post_id, *args, **kwargs):
@@ -148,7 +150,7 @@ def post_info(post_id, *args, **kwargs):
 
     return jsonify(found_post.dict()), 200
 
-@app.route('/new_posts', methods = ['GET'])
+@app.route(api_path + '/new_posts', methods = ['GET'])
 @auth.optional_token
 @auth.log_request
 @util.required_variables({
@@ -175,7 +177,7 @@ def get_new_posts(limit, *args, **kwargs):
         ]
     ), 200
 
-@app.route('/post/<int:post_id>/like_post', methods = ['POST'])
+@app.route(api_path + '/post/<int:post_id>/like_post', methods = ['POST'])
 @auth.requires_token
 @auth.log_request
 def like_post(post_id, user, *args, **kwargs):
@@ -200,7 +202,7 @@ def like_post(post_id, user, *args, **kwargs):
             status=True
         ), 200
 
-@app.route('/post/<int:post_id>/unlike_post', methods = ['POST'])
+@app.route(api_path + '/post/<int:post_id>/unlike_post', methods = ['POST'])
 @auth.requires_token
 @auth.log_request
 def unlike_post(post_id, user, *args, **kwargs):
@@ -224,7 +226,7 @@ def unlike_post(post_id, user, *args, **kwargs):
         status=True
     ), 200
 
-@app.route('/user/<int:user_id>/activity', methods = ['GET'])
+@app.route(api_path + '/user/<int:user_id>/activity', methods = ['GET'])
 @auth.optional_token
 @auth.log_request
 def user_activity(user_id, *args, **kwargs):
@@ -244,7 +246,7 @@ def user_activity(user_id, *args, **kwargs):
         last_request = desired_user.last_request,
     ), 200
 
-@app.route('/user/<int:user_id>', methods = ['GET'])
+@app.route(api_path + '/user/<int:user_id>', methods = ['GET'])
 @auth.optional_token
 @auth.log_request
 def user_info(user_id, *args, **kwargs):
@@ -265,7 +267,7 @@ def user_info(user_id, *args, **kwargs):
         ]
     ), 200
 
-@app.route('/analytics', methods = ['GET'])
+@app.route(api_path + '/analytics', methods = ['GET'])
 @auth.optional_token
 @auth.log_request
 def analytics(*args, **kwargs):

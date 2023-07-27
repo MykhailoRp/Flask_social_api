@@ -1,6 +1,5 @@
-from flask import Flask, jsonify, request
+from flask import jsonify, request
 from app.models import Token, User
-from app import db
 from time import time
 from functools import wraps
 

@@ -1,12 +1,9 @@
-import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler
-import os
-from threading import Thread, Timer
-from flask import Flask, request, current_app
+from threading import Timer
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from time import time
 
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={"autoflush": False})
 
 
 def create_app():

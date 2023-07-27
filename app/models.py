@@ -11,7 +11,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='user', lazy='dynamic', cascade="all, delete")
     likes = db.relationship('Like', backref = 'user', lazy = 'dynamic', cascade="all, delete")
-    tokens = db.relationship('Token', backref = 'user', lazy = 'dynamic')
+    tokens = db.relationship('Token', backref = 'user', lazy = 'dynamic', cascade="all, delete")
     last_login = db.Column(db.DateTime, default=datetime.utcnow)
     last_request = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -65,7 +65,7 @@ def expire_time(t = 36000):
 class Token(db.Model):
     token = db.Column(db.String(128), primary_key = True, nullable = False)
     expires = db.Column(db.Integer, default=expire_time)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"))
 
     def __repr__(self):
         return f'<Token {self.token}>'

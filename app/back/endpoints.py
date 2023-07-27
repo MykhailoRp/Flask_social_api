@@ -116,7 +116,7 @@ def create_post(user: models.User, content, *args, **kwargs):
     db.session.add(new_post)
     db.session.commit()
 
-    return redirect(f"/post/{new_post.id}")
+    return redirect(api_path + f"/post/{new_post.id}")
 
 @app.route(api_path + '/post/<int:post_id>/delete', methods = ['DELETE'])
 @auth.requires_token
@@ -181,7 +181,7 @@ def get_new_posts(limit, *args, **kwargs):
 @app.route(api_path + '/posts', methods = ['GET'])
 @auth.optional_token
 @auth.log_request
-def get_new_posts(*args, **kwargs):
+def get_posts(*args, **kwargs):
     found_posts = models.Post.query.order_by(models.Post.timestamp).all()
 
     return jsonify(
@@ -191,7 +191,7 @@ def get_new_posts(*args, **kwargs):
         ]
     ), 200
 
-@app.route(api_path + '/post/<int:post_id>/like_post', methods = ['POST'])
+@app.route(api_path + '/post/<int:post_id>/like_post', methods = ['GET'])
 @auth.requires_token
 @auth.log_request
 def like_post(post_id, user, *args, **kwargs):
@@ -216,7 +216,7 @@ def like_post(post_id, user, *args, **kwargs):
             status=True
         ), 200
 
-@app.route(api_path + '/post/<int:post_id>/unlike_post', methods = ['POST'])
+@app.route(api_path + '/post/<int:post_id>/unlike_post', methods = ['GET'])
 @auth.requires_token
 @auth.log_request
 def unlike_post(post_id, user, *args, **kwargs):

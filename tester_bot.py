@@ -24,7 +24,7 @@ def create_user(login, password, username):
         "username": username
     })
 
-    if resp.status_code == 200: return resp.json()['token']
+    if resp.status_code == 200: return resp.json()
     elif resp.status_code == 409: raise ValueError
     else: raise Exception(resp.text)
 
@@ -72,7 +72,7 @@ def perform_for_user():
 
     while True:
         try:
-            user_token = create_user(login, password, username)
+            user_login_data = create_user(login, password, username)
         except ValueError:
             login = gen_ran_str(20)
             password = gen_ran_str(20)
@@ -83,6 +83,10 @@ def perform_for_user():
             tries += 1
         else:
             break
+
+    user_token = user_login_data['token']
+    user_obj = user_login_data['user_data']
+    user_id = user_obj['id']
 
     ses = req.session()
 
@@ -105,6 +109,10 @@ def perform_for_user():
 
     liked = like_posts(ses, posts_to_like)
 
+    user_analitics_resp = ses.get(api_url + f"/user/{user_id}/activity")
+
+    logging.warning(f"{login} activity data: {user_analitics_resp.text}")
+
     resp = ses.post(api_url + "/logout", json = {"auth_token": user_token})
 
     if resp.status_code == 200: logging.warning(f"{login} DONE posted: {len(posted)}, liked: {len(liked)}")
@@ -121,5 +129,12 @@ for user_num in range(number_of_users):
 
 
 for u in users: u.join()
+
+
+resp_a = req.get(api_url + f"/analytics?date_from=2020-01-01&date_to=2023-08-30")
+
+print(resp_a.text)
+
+
 
 print("DONE")

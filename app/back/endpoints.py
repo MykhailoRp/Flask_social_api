@@ -70,7 +70,8 @@ def user_login(login, password):
         res_token = log_user.login_account(login = login, password = password)
 
         return jsonify(
-            token = res_token
+            token = res_token,
+            user_data = log_user.dict()
         ), 200
     else:
         return jsonify(
@@ -86,7 +87,7 @@ def user_login(login, password):
 })
 def user_logout(user, token, auth_token, *args, **kwargs):
 
-    found_token = models.Token.query.get(auth_token)
+    found_token = user.tokens.filter(models.Token.token == auth_token).first()
 
     if found_token is None:
         return jsonify(

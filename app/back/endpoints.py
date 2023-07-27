@@ -172,8 +172,22 @@ def get_new_posts(limit, *args, **kwargs):
     found_posts = models.Post.query.order_by(models.Post.timestamp).limit(limit).all()
 
     return jsonify(
+        post_number=len(list(found_posts)),
         posts = [
             p.dict() for p in found_posts
+        ]
+    ), 200
+
+@app.route(api_path + '/posts', methods = ['GET'])
+@auth.optional_token
+@auth.log_request
+def get_new_posts(*args, **kwargs):
+    found_posts = models.Post.query.order_by(models.Post.timestamp).all()
+
+    return jsonify(
+        post_number = len(list(found_posts)),
+        posts = [
+            p.id for p in found_posts
         ]
     ), 200
 
